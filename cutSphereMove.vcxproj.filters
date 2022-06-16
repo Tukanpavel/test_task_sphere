@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Header-Dateien">
+      <UniqueIdentifier>{95144a5e-73b5-4af3-8b46-f6ff80daac39}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+    <Filter Include="Ressourcen-Dateien">
+      <UniqueIdentifier>{99249aed-dcff-4861-b4a1-318783282722}</UniqueIdentifier>
+      <Extensions>ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe</Extensions>
+    </Filter>
+    <Filter Include="Quellcode-Dateien">
+      <UniqueIdentifier>{aec6fb0a-64cf-4d16-b4c7-9446554acbfe}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cutSphereMove.cpp">
+      <Filter>Quellcode-Dateien</Filter>
+    </ClCompile>
+    <ClCompile Include="mwException.cpp">
+      <Filter>Quellcode-Dateien</Filter>
+    </ClCompile>
+    <ClCompile Include="mwIdxRangeException.cpp">
+      <Filter>Quellcode-Dateien</Filter>
+    </ClCompile>
+    <ClCompile Include="CalcSphereMovement.cpp">
+      <Filter>Quellcode-Dateien</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="mwException.hpp">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="mwIdxRangeException.hpp">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="mwTPoint3d.hpp">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="CalcSphereMovement.hpp">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
