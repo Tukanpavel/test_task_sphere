@@ -112,7 +112,7 @@ double PointToPointDestination( const cadcam::mwTPoint3d<double>& startVectorPoi
 								const cadcam::mwTPoint3d<double>& point )
 {
 	cadcam::mwTPoint3d<double> a = startVectorPoint - point;
-	return sqrt( a * a );
+	return ~a;
 }
 
 double PointToLineDestination( const cadcam::mwTPoint3d<double>& startVectorPoint,
@@ -121,7 +121,7 @@ double PointToLineDestination( const cadcam::mwTPoint3d<double>& startVectorPoin
 {
 	cadcam::mwTPoint3d<double> a = endVectorPoint - startVectorPoint;
 	cadcam::mwTPoint3d<double> b = point - startVectorPoint;
-	return sqrt( ( a % b ) * ( a % b ) ) /sqrt( a * a );
+	return  ~( a % b ) / ~ a;
 }
 
 void PrintPoint( const cadcam::mwTPoint3d<double>& point, const std::string& outputFileName)
