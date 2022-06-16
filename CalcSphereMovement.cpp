@@ -1,5 +1,6 @@
 #include "CalcSphereMovement.hpp"
 #include <fstream>
+#include <iostream>
 
 void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 									const unsigned long nx, const unsigned long ny,
@@ -9,56 +10,52 @@ void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 									const cadcam::mwTPoint3d<double>& sphereEndPos,
 									const std::string &outputFileName )
 {
+	CleanPreviousRun(outputFileName);
+
 	cadcam::mwTPoint3d<double> tempPos = cadcam::mwTPoint3d<double>( refPoint );
-	
+
 	double x = tempPos.x();
 	double y = tempPos.y();
 	double z = tempPos.z();
 
-	cadcam::mwTPoint3d<double> pathVector = sphereEndPos - sphereStartPos;
+	cadcam::mwTPoint3d<double> startBorder = sphereStartPos;
+	cadcam::mwTPoint3d<double> endBorder = sphereEndPos;
 
-	//Path vector would be normalised
-	Normalise( pathVector );
+	double xLowBorder = fmin( startBorder.x(), endBorder.x() ) - sphereRad;
+	double xHighBorder = fmax( startBorder.x(), endBorder.x() ) + sphereRad;
 
-	cadcam::mwTPoint3d<double> startBorder = sphereStartPos - pathVector * sphereRad * sqrt(2);
-	cadcam::mwTPoint3d<double> endBorder = sphereEndPos + pathVector * sphereRad * sqrt(2);
-
-	double xLowBorder = fmin( startBorder.x(), endBorder.x() );
-	double xHighBorder = fmax( startBorder.x(), endBorder.x() );
-
-	double yLowBorder = fmin( startBorder.y(), endBorder.y() );
-	double yHighBorder = fmax( startBorder.y(), endBorder.y() );
-
-	double zLowBorder = fmin( startBorder.z(), endBorder.z() );
-	double zHighBorder = fmax( startBorder.z(), endBorder.z() );
+	double yLowBorder = fmin( startBorder.y(), endBorder.y() ) - sphereRad;
+	double yHighBorder = fmax( startBorder.y(), endBorder.y() ) + sphereRad;
 	
+	double zLowBorder = fmin( startBorder.z(), endBorder.z() ) - sphereRad;
+	double zHighBorder = fmax( startBorder.z(), endBorder.z() ) + sphereRad;
 
-	for ( size_t i = 0; i < nx && x < xHighBorder; i++, tempPos.x( x + delta ) )
+	for ( size_t i = 0; i < nx  && x <= xHighBorder; i++, tempPos.x(x + delta))
 	{
 		x = tempPos.x();
-
 		if ( x < xLowBorder )
 		{
 			continue;
 		}
 
-		tempPos.y( refPoint.y() );
+		y = refPoint.y();
+		tempPos.y( y );
 
-		for ( size_t j = 0; j < ny && y < yHighBorder; j++, tempPos.y( y + delta ) )
+		for ( size_t j = 0; j < ny  && y <= yHighBorder; j++, tempPos.y(y + delta))
 		{
 			y = tempPos.y();
-
+			
 			if ( y < yLowBorder )
 			{
 				continue;
 			}
+			z = refPoint.z();
+			tempPos.z( z );
 
-			tempPos.z( refPoint.z() );
-
-			for ( size_t k = 0; k < nz && z < zHighBorder; k++, tempPos.z( z + delta ) )
+			for ( size_t k = 0; k < nz  && z <= zHighBorder; k++, tempPos.z(z + delta))
 			{
 				z = tempPos.z();
-
+				
 				if ( z < zLowBorder )
 				{
 					continue;
@@ -66,7 +63,7 @@ void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 
 				if ( ScalarProductIsNegative( sphereStartPos, sphereEndPos, tempPos ) ) 
 				{
-					long result = PointToPointDestination( sphereStartPos, tempPos );
+					double result = PointToPointDestination( sphereStartPos, tempPos );
 					
 					if ( result <= sphereRad )
 					{
@@ -78,7 +75,7 @@ void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 				}
 				if ( ScalarProductIsNegative( sphereEndPos, sphereStartPos, tempPos ) )
 				{
-					long result = PointToPointDestination( sphereEndPos, tempPos );
+					double result = PointToPointDestination( sphereEndPos, tempPos );
 
 					if ( result <= sphereRad )
 					{
@@ -89,7 +86,7 @@ void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 					continue;
 				}
 
-				long result = PointToLineDestination( sphereStartPos, sphereEndPos, tempPos );
+				double result = PointToLineDestination( sphereStartPos, sphereEndPos, tempPos );
 				
 				if ( result <= sphereRad )
 				{
@@ -104,7 +101,7 @@ void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 
 void Normalise( cadcam::mwTPoint3d<double>& vector )
 {
-	long length = sqrt( vector.x() * vector.x() + 
+	double length = sqrt( vector.x() * vector.x() + 
 						vector.y() * vector.y() +
 						vector.z() * vector.z() );
 	vector.x(vector.x() / length);
@@ -118,17 +115,17 @@ bool ScalarProductIsNegative( const cadcam::mwTPoint3d<double>& startVectorPoint
 {
 	cadcam::mwTPoint3d<double> a = endVectorPoint - startVectorPoint;
 	cadcam::mwTPoint3d<double> b = point - startVectorPoint;
-	return ( a.x() * b.x() + a.y() * b.y() + a.z() + b.z() ) < 0;
+	return (( a.x() * b.x() + a.y() * b.y() + a.z() + b.z() ) < 0);
 }
 
-long PointToPointDestination( const cadcam::mwTPoint3d<double>& startVectorPoint,
+double PointToPointDestination( const cadcam::mwTPoint3d<double>& startVectorPoint,
 								const cadcam::mwTPoint3d<double>& point )
 {
 	cadcam::mwTPoint3d<double> a = startVectorPoint - point;
 	return sqrt( a.x() * a.x() + a.y() * a.y() + a.z() * a.z() );
 }
 
-long PointToLineDestination( const cadcam::mwTPoint3d<double>& startVectorPoint,
+double PointToLineDestination( const cadcam::mwTPoint3d<double>& startVectorPoint,
 								const cadcam::mwTPoint3d<double>& endVectorPoint,
 								const cadcam::mwTPoint3d<double>& point )
 {
@@ -140,10 +137,19 @@ long PointToLineDestination( const cadcam::mwTPoint3d<double>& startVectorPoint,
 				sqrt( a.x() * a.x() + a.y() * a.y() + a.z() * a.z() );
 }
 
-void PrintPoint( const cadcam::mwTPoint3d<double>& point, const std::string& outputName)
+void PrintPoint( const cadcam::mwTPoint3d<double>& point, const std::string& outputFileName)
 {
 	std::ofstream out;
-	out.open(outputName);
-	out << point.x() << ' ' << point.y() << ' ' << point.z() << '\n';
+	out.open(outputFileName, std::ios::app);
+	if (out.is_open())
+	{
+		out << point.x() << ' ' << point.y() << ' ' << point.z() << '\n';
+	}
+	out.close();
+}
+
+void CleanPreviousRun(const std::string& outoutFileName) {
+	std::ofstream out;
+	out.open(outoutFileName, std::ios::trunc);
 	out.close();
 }
