@@ -99,30 +99,20 @@ void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 
 }
 
-void Normalise( cadcam::mwTPoint3d<double>& vector )
-{
-	double length = sqrt( vector.x() * vector.x() + 
-						vector.y() * vector.y() +
-						vector.z() * vector.z() );
-	vector.x(vector.x() / length);
-	vector.y(vector.y() / length);
-	vector.z(vector.z() / length);
-}
-
 bool ScalarProductIsNegative( const cadcam::mwTPoint3d<double>& startVectorPoint,
 								const cadcam::mwTPoint3d<double>& endVectorPoint,
 								const cadcam::mwTPoint3d<double>& point )
 {
 	cadcam::mwTPoint3d<double> a = endVectorPoint - startVectorPoint;
 	cadcam::mwTPoint3d<double> b = point - startVectorPoint;
-	return (( a.x() * b.x() + a.y() * b.y() + a.z() + b.z() ) < 0);
+	return (a * b < 0);
 }
 
 double PointToPointDestination( const cadcam::mwTPoint3d<double>& startVectorPoint,
 								const cadcam::mwTPoint3d<double>& point )
 {
 	cadcam::mwTPoint3d<double> a = startVectorPoint - point;
-	return sqrt( a.x() * a.x() + a.y() * a.y() + a.z() * a.z() );
+	return sqrt( a * a );
 }
 
 double PointToLineDestination( const cadcam::mwTPoint3d<double>& startVectorPoint,
@@ -131,10 +121,7 @@ double PointToLineDestination( const cadcam::mwTPoint3d<double>& startVectorPoin
 {
 	cadcam::mwTPoint3d<double> a = endVectorPoint - startVectorPoint;
 	cadcam::mwTPoint3d<double> b = point - startVectorPoint;
-	return sqrt( (a.y() * b.z() - a.z() * b.y()) * (a.y() * b.z() - a.z() * b.y()) +
-				(a.z() * b.x() - a.x() * b.z()) * (a.z() * b.x() - a.x() * b.z()) +
-				(a.x() * b.y() - a.y() * b.x()) * (a.x() * b.y() - a.y() * b.x()) ) /
-				sqrt( a.x() * a.x() + a.y() * a.y() + a.z() * a.z() );
+	return sqrt( ( a % b ) * ( a % b ) ) /sqrt( a * a );
 }
 
 void PrintPoint( const cadcam::mwTPoint3d<double>& point, const std::string& outputFileName)
