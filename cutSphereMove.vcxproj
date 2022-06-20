@@ -144,12 +144,14 @@
       <BasicRuntimeChecks Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">EnableFastChecks</BasicRuntimeChecks>
       <Optimization Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">MaxSpeed</Optimization>
     </ClCompile>
+    <ClCompile Include="SphereBorder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CalcSphereMovement.hpp" />
     <ClInclude Include="mwException.hpp" />
     <ClInclude Include="mwIdxRangeException.hpp" />
     <ClInclude Include="mwTPoint3d.hpp" />
+    <ClInclude Include="SphereBorder.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
