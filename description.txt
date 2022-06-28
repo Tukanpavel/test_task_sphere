@@ -1,0 +1,25 @@
+	First of all, I've divided the task into two questions:
+	- How to verify that the sphere would intersect points in the cloud?
+	- How to restrict considered space so we don't go through the all points of it unnecessary?
+
+	To solve first problem, I've found that the movement of the sphere comes down to a model that contains a
+line segment (which is given by start and end points) and a radius of this sphere.
+
+	The easiest meaningful way to restrict space is to describe parallelepiped about the surface of moving sphere.
+I've done it by calculating two diagonally opposing points of parallelepiped by subtracting and adding radius 
+to a highest and lowest points of segment respectively. It is done in Builder class inside of a SphereBorder.
+
+	After that, I run three cycles on three coordinates to check through all of the points if sphere intersects them. 
+I get the initial and final values from the SphereBorder class.
+
+	In order to check points, I defined where the point is relatively to a segment. 
+It is done by calculating scalar product from a point to a start and end point. 
+According to signes of products there are theese cases:
+- if product to start or end points is negative or zero we calculate the distance as the distance from point to point.
+- in the second case, when both products are positive, the desired distance will be calculated 
+as the distance from the point to the line.
+
+	Distance from point to point is calculated as module of difference between theese points 
+(Implementation: PointToPointDestination function in CalcSphereMovement.cpp).
+	Distance from point to line is calculated as module of vector product divided by a length of a segment.
+(Implementation: PointToLineDestination function in CalcSphereMovement.cpp).

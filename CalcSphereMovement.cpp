@@ -54,6 +54,8 @@ void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 
 				tempPos.z(z);
 
+				// case where scalar product to start point is negative
+
 				if ( ScalarProductIsNegative( sphereStartPos, sphereEndPos, tempPos ) ) 
 				{
 					double result = PointToPointDestination( sphereStartPos, tempPos );
@@ -66,6 +68,9 @@ void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 
 					continue;
 				}
+
+				// case where scalar product to an end point is negative
+
 				if ( ScalarProductIsNegative( sphereEndPos, sphereStartPos, tempPos ) )
 				{
 					double result = PointToPointDestination( sphereEndPos, tempPos );
@@ -78,6 +83,8 @@ void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 
 					continue;
 				}
+
+				// case where both of products are positive
 
 				double result = PointToLineDestination( sphereStartPos, sphereEndPos, tempPos );
 				
