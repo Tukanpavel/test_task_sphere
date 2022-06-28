@@ -1,4 +1,5 @@
 #include "CalcSphereMovement.hpp"
+#include "SphereBorder.hpp"
 #include <fstream>
 #include <iostream>
 
@@ -12,54 +13,48 @@ void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 {
 	CleanPreviousRun(outputFileName);
 
-	cadcam::mwTPoint3d<double> tempPos = cadcam::mwTPoint3d<double>( refPoint );
+	cadcam::mwTPoint3d<double> tempPos = cadcam::mwTPoint3d<double>();
 
-	double x = tempPos.x();
-	double y = tempPos.y();
-	double z = tempPos.z();
+	SphereBorder<double>* border = SphereBorder<double>::Builder()
+		.WithRefPoint(refPoint)
+		->WithStartPoint(sphereStartPos)
+		->WithEndPoint(sphereEndPos)
+		->WithSphereRad(sphereRad)
+		->WithXNumber(nx)
+		->WithYNumber(ny)
+		->WithZNumber(nz)
+		->WithDelta(delta)
+		->Build();
 
-	cadcam::mwTPoint3d<double> startBorder = sphereStartPos;
-	cadcam::mwTPoint3d<double> endBorder = sphereEndPos;
-
-	double xLowBorder = fmin( startBorder.x(), endBorder.x() ) - sphereRad;
-	double xHighBorder = fmax( startBorder.x(), endBorder.x() ) + sphereRad;
-
-	double yLowBorder = fmin( startBorder.y(), endBorder.y() ) - sphereRad;
-	double yHighBorder = fmax( startBorder.y(), endBorder.y() ) + sphereRad;
-	
-	double zLowBorder = fmin( startBorder.z(), endBorder.z() ) - sphereRad;
-	double zHighBorder = fmax( startBorder.z(), endBorder.z() ) + sphereRad;
-
-	for ( size_t i = 0; i < nx  && x <= xHighBorder; i++, tempPos.x(x + delta))
+	for ( double x = refPoint.x();  x <= border->xMax();  x += delta)
 	{
-		x = tempPos.x();
-		if ( x < xLowBorder )
+		if ( x < border->xMin() )
 		{
 			continue;
 		}
 
-		y = refPoint.y();
-		tempPos.y( y );
+		tempPos.x(x);
 
-		for ( size_t j = 0; j < ny  && y <= yHighBorder; j++, tempPos.y(y + delta))
+		for ( double y = refPoint.y(); y <= border->yMax(); y += delta)
 		{
-			y = tempPos.y();
 			
-			if ( y < yLowBorder )
+			if ( y < border->yMin() )
 			{
 				continue;
 			}
-			z = refPoint.z();
-			tempPos.z( z );
+			
+			tempPos.y(y);
 
-			for ( size_t k = 0; k < nz  && z <= zHighBorder; k++, tempPos.z(z + delta))
+			for ( double z = refPoint.z(); z <= border->zMax(); z += delta)
 			{
-				z = tempPos.z();
-				
-				if ( z < zLowBorder )
+				if ( z < border->zMin() )
 				{
 					continue;
 				}
+
+				tempPos.z(z);
+
+				// case where scalar product to start point is negative
 
 				if ( ScalarProductIsNegative( sphereStartPos, sphereEndPos, tempPos ) ) 
 				{
@@ -73,6 +68,9 @@ void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 
 					continue;
 				}
+
+				// case where scalar product to an end point is negative
+
 				if ( ScalarProductIsNegative( sphereEndPos, sphereStartPos, tempPos ) )
 				{
 					double result = PointToPointDestination( sphereEndPos, tempPos );
@@ -85,6 +83,8 @@ void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 
 					continue;
 				}
+
+				// case where both of products are positive
 
 				double result = PointToLineDestination( sphereStartPos, sphereEndPos, tempPos );
 				
@@ -128,10 +128,7 @@ void PrintPoint( const cadcam::mwTPoint3d<double>& point, const std::string& out
 {
 	std::ofstream out;
 	out.open(outputFileName, std::ios::app);
-	if (out.is_open())
-	{
-		out << point.x() << ' ' << point.y() << ' ' << point.z() << '\n';
-	}
+	out << point.x() << ' ' << point.y() << ' ' << point.z() << '\n';
 	out.close();
 }
 

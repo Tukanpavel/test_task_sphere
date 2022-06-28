@@ -27,6 +27,9 @@
     <ClCompile Include="CalcSphereMovement.cpp">
       <Filter>Quellcode-Dateien</Filter>
     </ClCompile>
+    <ClCompile Include="SphereBorder.cpp">
+      <Filter>Quellcode-Dateien</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="mwException.hpp">
@@ -39,6 +42,9 @@
       <Filter>Header-Dateien</Filter>
     </ClInclude>
     <ClInclude Include="CalcSphereMovement.hpp">
+      <Filter>Header-Dateien</Filter>
+    </ClInclude>
+    <ClInclude Include="SphereBorder.hpp">
       <Filter>Header-Dateien</Filter>
     </ClInclude>
   </ItemGroup>
