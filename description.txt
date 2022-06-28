@@ -12,14 +12,15 @@ to a highest and lowest points of segment respectively. It is done in Builder cl
 	After that, I run three cycles on three coordinates to check through all of the points if sphere intersects them. 
 I get the initial and final values from the SphereBorder class.
 
-	In order to check points, I defined where the point is relatively to a segment. 
-It is done by calculating scalar product from a point to a start and end point. 
-According to signes of products there are theese cases:
-- if product to start or end points is negative or zero we calculate the distance as the distance from point to point.
-- in the second case, when both products are positive, the desired distance will be calculated 
-as the distance from the point to the line.
+	In order to check points, I checked sign of scalar products of two pairs of vectors, made from an end, start and checked point.
+First pair begins at end point and second begins at start point of sphere. If one of them is negative, 
+the distance from point to a segment will be calculated as the distance between checked point and corresponding end or start pont.
+
+	When both of the products are positive, the desired distance will be calculated as the distance from checked point to the line.
 
 	Distance from point to point is calculated as module of difference between theese points 
 (Implementation: PointToPointDestination function in CalcSphereMovement.cpp).
 	Distance from point to line is calculated as module of vector product divided by a length of a segment.
 (Implementation: PointToLineDestination function in CalcSphereMovement.cpp).
+
+	After distance is calculated we check it and if it less or equal to a sphere radius then we write it to a file(function PrintPoint);
