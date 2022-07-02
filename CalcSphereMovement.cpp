@@ -1,7 +1,6 @@
 #include "CalcSphereMovement.hpp"
 #include "SphereBorder.hpp"
 #include <fstream>
-#include <iostream>
 
 void CalcSphereMovement( const cadcam::mwTPoint3d<double>& refPoint,
 									const unsigned long nx, const unsigned long ny,
